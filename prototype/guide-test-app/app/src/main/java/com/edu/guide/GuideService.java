@@ -507,6 +507,9 @@ public class GuideService extends AccessibilityService {
                 if (!n.isVisibleToUser()) continue;
                 String d = describe(n).trim();
                 if (d.isEmpty() && n.getHintText() != null && n.isEditable()) d = "(입력 칸) " + n.getHintText();
+                // 11/27 DUMP5: 비밀번호 칸은 글자가 비어 있어도 기록하고, 적힌 글자(가려진 점 포함)는 절대 남기지 않음
+                boolean pwd = n.isPassword();
+                if (pwd) d = "(비밀번호 칸)";
                 if (d.isEmpty()) continue;
                 AccessibilityNodeInfo t = clickableAncestor(n);
                 t.getBoundsInScreen(r);
@@ -523,8 +526,9 @@ public class GuideService extends AccessibilityService {
                     if (p.equals(t)) break;
                     p = p.getParent();
                 }
-                Log.i(TAG, "DUMP4|" + pkg + "|" + t.isClickable() + "|" + n.isEditable() + "|"
-                        + r.left + "," + r.top + "," + r.right + "," + r.bottom + "|" + rid.replace('|', '/') + "|" + cls + "|" + sel + "|" + d.replace('\n', ' '));
+                // DUMP5 = DUMP4 + 비밀번호 칸 여부(selected 다음). DUMP5|pkg|click|edit|l,t,r,b|rid|cls|selected|password|text
+                Log.i(TAG, "DUMP5|" + pkg + "|" + t.isClickable() + "|" + n.isEditable() + "|"
+                        + r.left + "," + r.top + "," + r.right + "," + r.bottom + "|" + rid.replace('|', '/') + "|" + cls + "|" + sel + "|" + pwd + "|" + d.replace('\n', ' '));
             }
         }
         Log.i(TAG, "DUMP2|end");
